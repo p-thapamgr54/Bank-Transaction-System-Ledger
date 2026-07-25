@@ -1,4 +1,6 @@
 import { User } from "../models/user.model.js";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 export const userRegisterController = async (req, res) => {
   // Extracting user details from req.body
@@ -28,6 +30,10 @@ export const userRegisterController = async (req, res) => {
     password,
   });
 
+  // Create jwt token  using jwt secret key
+  const token = await jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "3d",
+  });
   res.status(201).json({
     sucess: true,
     message: "User registered sucessfully ....",
