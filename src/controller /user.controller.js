@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
-// function for user register controller
+// Function for user register controller
 export const userRegisterController = async (req, res) => {
   // Extracting user details from req.body
   const { name, email, password } = req.body;
@@ -10,7 +10,7 @@ export const userRegisterController = async (req, res) => {
   // Validating user details empty or not
   if ([name, email, password].some((field) => field?.trim() === "")) {
     return res.status(400).json({
-      sucess: false,
+      success: false,
       message: "All fields are required ....",
     });
   }
@@ -19,7 +19,7 @@ export const userRegisterController = async (req, res) => {
   const existedUser = await User.findOne({ email });
   if (existedUser) {
     return res.status(422).json({
-      sucess: false,
+      success: false,
       message: " User already exists with same email address ....",
     });
   }
@@ -44,8 +44,56 @@ export const userRegisterController = async (req, res) => {
   });
 
   res.status(201).json({
-    sucess: true,
+    success: true,
     message: "User registered sucessfully ....",
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    },
+    token,
+  });
+};
+
+// Function for user login controller
+export const userLoginController = async (req, res) => {
+  // Extracting email and password from req.body
+  const { name, email, password } = req.body;
+
+  // Find single user by email address
+  const user = await User.findOne({ email }).select("+password");
+
+  // Search for user with valid email address
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: "Email address is invalid ...",
+    });
+  }
+
+  // Compare user login password with registered password
+  const isValidPassword = await user.comparePassword(password);
+  if (!isValidPassword) {
+    return res.status(401).json({
+      success: false,
+      message: "Password is invalid ....",
+    });
+  }
+  // Create jwt token  using jwt secret key for login
+  const token = await jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "3d",
+  });
+
+  // Pass token inside an HttpOnly cookie
+  res.cookie("token", token, {
+    httpOnly: true, // Prevents frontend JS from reading the cookie
+    sameSite: "strict", // Protects against CSRF attacks
+    maxAge: 3600000 * 3, // Cookie expiry matching token (3 hour in ms)
+  });
+
+  res.status(201).json({
+    success: true,
+    message: ` User logged in sucessfully ...`,
     user: {
       _id: user._id,
       name: user.name,
