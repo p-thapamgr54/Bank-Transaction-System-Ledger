@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import { sendRegisteredEmail } from "../service/email.service.js";
 
 // Function for user register controller
 export const userRegisterController = async (req, res) => {
@@ -53,6 +54,8 @@ export const userRegisterController = async (req, res) => {
     },
     token,
   });
+  // Send email to registered email address
+  await sendRegisteredEmail(user.email, user.name);
 };
 
 // Function for user login controller
