@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-// Creating Schema for User Model
+// Creating schema for user model
 const userSchema = new mongoose.Schema(
   {
     email: {

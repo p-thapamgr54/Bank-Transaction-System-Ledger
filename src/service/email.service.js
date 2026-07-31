@@ -41,8 +41,8 @@ export const sendEmail = async (to, subject, text, html) => {
 export const sendRegisteredEmail = async (email, name) => {
   const subject = "Welcome to Bank-Transaction-System";
   const text = `Hello${name}, \n\n Thank Your for Registering at Bank-Transaction-System`;
-  const html = `    <p> Dear ${name},</p> <p> Thank you for registering at bank-transaction-system. We're excited to have you on board !</p><p> Best regards,<br> The Bank-Transaction-System</p>
-    </p>
-`;
+  const html = `<p> Dear ${name},</p> <p> Thank you for registering at bank-transaction-system. We're excited to have you on board !</p><p> Best regards,<br> The Bank-Transaction-System</p>
+    </p>`;
+
   await sendEmail(email, subject, text, html);
 };
