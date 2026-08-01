@@ -3,28 +3,28 @@ import { User } from "../models/user.model.js";
 
 // Create account schema for account model
 const accountSchema = new mongoose.Schema(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "Account must be associated with a user"],
-      index: true,
+    {
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: [true, "Account must be associated with a user"],
+            index: true,
+        },
+        status: {
+            type: String,
+            enum: {
+                values: ["ACTIVE", "FREEZE", "CLOSED"],
+                message: "Status can be either ACTIVE, FREEZE or CLOSED",
+            },
+            default: "ACTIVE",
+        },
+        currency: {
+            type: String,
+            required: [true, "Currency is required for creating an account"],
+            default: "NPR",
+        },
     },
-    status: {
-      type: String,
-      enum: {
-        values: ["ACTIVE", "FREEZE", "CLOSED"],
-        message: "Status can be either ACTIVE, FREEZE or CLOSED",
-      },
-      default: "ACTIVE",
-    },
-    currency: {
-      type: String,
-      required: [true, "Currency is required for creating an account"],
-      default: "NPR",
-    },
-  },
-  { timestamps: true },
+    { timestamps: true }
 );
 
 // Create compound index to sort accounts using user or status
